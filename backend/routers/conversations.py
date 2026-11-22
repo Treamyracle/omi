@@ -1136,7 +1136,7 @@ def get_conversations(
     response: Response = None,  # type: ignore[assignment]
     limit: PositiveLimit = 100,
     offset: NonNegativeOffset = 0,
-    statuses: Optional[str] = "processing,completed",
+    statuses: Optional[str] = None,
     include_discarded: bool = False,
     sources: Optional[str] = Query(
         None,
@@ -1159,6 +1159,8 @@ def get_conversations(
         raise HTTPException(status_code=400, detail="start_date must be earlier than or equal to end_date")
     logger.info(f'get_conversations {uid} {limit} {offset} {statuses} {sources} {folder_id} {starred}')
     # force convos statuses to processing, completed on the empty filter
+    if statuses is None:
+        statuses = "processing,completed"
     if len(statuses) == 0:
         statuses = "processing,completed"
     source_list = [source.strip() for source in sources.split(',') if source.strip()] if sources else []
